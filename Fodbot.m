@@ -22,7 +22,7 @@ classdef Fodbot < FodbotOffline
             this.fullGroup = HebiLookup.newGroupFromNames('*',...
                 [this.xGroup.getInfo.name;
                  this.sGroup.getInfo.name]);
-            
+            setgains;
             
             this.arm = HebiArm(this.fullGroup, this.fullKin);
 %             this.arm = ContactArm(this.fullGroup, this.fullKin);
