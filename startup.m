@@ -3,7 +3,7 @@ function [] = startup()
 
 localDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(localDir));
-addpath(fullfile(localDir, 'HEBI_API_1908'));
+addpath(fullfile(localDir, 'HEBI_API_2009'));
 addpath(fullfile(localDir, 'matlab_SEA'));
 addpath(fullfile(localDir,'matlab_SEA', 'armControl'));
 addpath(fullfile(localDir,'matlab_SEA', 'plottingTools'));
