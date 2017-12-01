@@ -202,16 +202,16 @@ classdef HebiArm < handle
         function setAngles(this, angles)
             cmd = this.reusableCmd;
             cmd.position = angles;
-            cmd.torque = this.kin.getGravCompTorques(angles, ...
+            cmd.effort = this.kin.getGravCompEfforts(angles, ...
                                                      this.gravityVector);
             this.group.set(cmd);
         end
         
         function goLimp(this)
             cmd = CommandStruct();
-            % cmd.torque = zeros(size(this.group.getNextFeedback().torque));
+            % cmd.effort = zeros(size(this.group.getNextFeedback().effort));
             cmd.position = [];
-            cmd.torque = [];
+            cmd.effort = [];
             cmd.velocity = [];
             this.group.set(cmd);
         end
@@ -251,8 +251,8 @@ classdef HebiArm < handle
                 cmd.position(isFar) = ...
                     a*cmd.position(isFar) + (1-a) * newPos(isFar);
                 
-                cmd.torque = this.kin...
-                    .getGravCompTorques(cmd.position, ...
+                cmd.effort = this.kin...
+                    .getGravCompEfforts(cmd.position, ...
                                         this.gravityVector);
                 g.set(cmd);
                 prevPos(isFar) = cmd.position(isFar);
@@ -394,7 +394,7 @@ classdef HebiArm < handle
                 % Send the Commands
                 cmd.position = cmdAngles;
                 cmd.velocity = cmdVelocities;
-                cmd.torque = cmdTorques;
+                cmd.effort = cmdTorques;
                 this.group.set(cmd);
 
             end
@@ -445,8 +445,8 @@ classdef HebiArm < handle
             
             % Get the desired forces to compensate for gravity
             % and joint accelerations
-            accelCompTorque = this.kin.getDynamicCompTorques(fbkPosition, cmdAngles, cmdVelocities, cmdAccels);
-            gravCompTorque = this.kin.getGravCompTorques(fbkPosition, this.gravityVector);
+            accelCompTorque = this.kin.getDynamicCompEfforts(fbkPosition, cmdAngles, cmdVelocities, cmdAccels);
+            gravCompTorque = this.kin.getGravCompEfforts(fbkPosition, this.gravityVector);
             cmdTorques = gravCompTorque + accelCompTorque;
 
         end
@@ -507,8 +507,8 @@ classdef HebiArm < handle
         
         function abort = exceedsTorqueError(this, fbk)
         % Checks whether the max torque error is too big
-        % max(abs(fbk.torque - fbk.torqueCmd))
-            abort = max(abs(fbk.torque - fbk.torqueCmd)) > this.maxTorqueError;
+        % max(abs(fbk.effort - fbk.effortCmd))
+            abort = max(abs(fbk.effort - fbk.effortCmd)) > this.maxTorqueError;
         end
         
         function abort = exceedsTorqueLimit(this, torque)
@@ -518,7 +518,7 @@ classdef HebiArm < handle
         function [] = setEmptyCommand(this)
         % Stops all velocity/position/torque commands on the group
             cmd = this.reusableCmd;
-            cmd.torque = [];
+            cmd.effort = [];
             cmd.velocity = [];
             cmd.position = [];
             

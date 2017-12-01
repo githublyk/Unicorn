@@ -3,13 +3,14 @@ classdef Fodbot < FodbotOffline
     
     methods(Access = public)
         function this = Fodbot()
-            sGroup = HebiLookup.newGroupFromNames('*', ...
-          {'SA065', 'SA068', 'SA069', ...
-           'SA067', 'SA064'
+%             sGroup = HebiLookup.newGroupFromNames('*', ...
+            sGroup = HebiLookup.newConnectedGroupFromName('*','SA065');
+%           {'SA065', 'SA068', 'SA069', ...
+%            'SA067', 'SA064'
            % 'SA067', ...
             % 'SA068', 'SA069',...
             % 'SA065', 'SA076'...
-                   });
+%                    });
 
             this@FodbotOffline(2 + sGroup.getNumModules);
             
@@ -19,12 +20,12 @@ classdef Fodbot < FodbotOffline
             this.sGroup = sGroup;
             
             this.fullGroup = HebiLookup.newGroupFromNames('*',...
-                [this.xGroup.getInfo.name(1:end-1);
-                 this.sGroup.getInfo.name(1:end-1)]);
+                [this.xGroup.getInfo.name;
+                 this.sGroup.getInfo.name]);
             
             
-            % this.arm = HebiArm(this.fullGroup, this.fullKin);
-            this.arm = ContactArm(this.fullGroup, this.fullKin);
+            this.arm = HebiArm(this.fullGroup, this.fullKin);
+%             this.arm = ContactArm(this.fullGroup, this.fullKin);
             
             this.allModules = 1:this.fullGroup.getNumModules();
 

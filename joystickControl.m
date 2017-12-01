@@ -1,14 +1,18 @@
 function joystickControl
+startup;
     joy = vrjoystick(1);
     fodbot = Fodbot();
     
+    fbk = fodbot.fullGroup.getNextFeedback();
+    fodbot.arm.setAngles(    fbk.position );
+
     
     cartMotion = zeros(1,6);
     
     stowed = false;
-    
+    running = true;
     t = tic;
-    while(true)
+    while(running)
         [axes, buttons, povs] = read(joy);
         % buttons
         dt = toc(t);
@@ -21,14 +25,15 @@ function joystickControl
         
         runSpecialCommands(fodbot, buttons, joy);
         
-        if(checkEnd(buttons))
+        if(any(buttons(9:12)))
             disp('ending')
-            break
+            running = false;
         end
         
         t = tic;
         pause(0.01)
     end
+    fodbot.arm.goLimp();
 end
 
 function joyCmd = mapJoystick(axes, buttons)
@@ -79,7 +84,6 @@ function updateFodbot(fodbot, dP)
 
     angles(end-1) = angles(end-1) + dP(6);
     angles(end) = angles(end) + dP(5);
-    angles;
     fodbot.arm.setAngles(angles);
 end
 
@@ -125,10 +129,10 @@ function waitForUnstow(joy)
     end
 end
 
-function stop = checkEnd(buttons)
-    stop = false;
-    if buttons(7) && buttons(8)
-        stop = true;
-        error('Stop requested, exiting')
-    end
-end
+% function stop = checkEnd(buttons)
+%     stop = false;
+%     if buttons(7) && buttons(8)
+%         stop = true;
+%         error('Stop requested, exiting')
+%     end
+% end
