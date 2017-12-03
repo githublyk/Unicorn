@@ -3,6 +3,8 @@ function [] = startup()
 
 localDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(localDir));
+addpath(fullfile(localDir, 'camera'));
+addpath(fullfile(localDir, 'camera', 'HebiCam'));
 addpath(fullfile(localDir, 'HEBI_API_2009'));
 addpath(fullfile(localDir, 'matlab_SEA'));
 addpath(fullfile(localDir,'matlab_SEA', 'armControl'));
