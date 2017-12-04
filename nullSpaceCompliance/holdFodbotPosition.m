@@ -15,7 +15,7 @@ function holdFodbotPosition(fodbot, duration, varargin)
     n = 8;
     kin = fodbot.fullKin;
     % firstKin = fodbot.xKin;
-    lastKin = fodbot.sKin;
+%     lastKin = fodbot.sKin;
     
     goal = fodbot.getFK();
 
@@ -24,8 +24,8 @@ function holdFodbotPosition(fodbot, duration, varargin)
 
     % lastKin.setBaseFrame(firstKin.getFK('EndEffector', ...
     %                                     fbk.position(1:n-c)));
-    fodbot.update();
-    lastKin.getFK('EndEffector', fbk.position(n-c+1:n)) - goal;
+%     fodbot.update();
+%     kin.getFK('EndEffector', fbk.position) - goal;
 
     cmd = CommandStruct();
     cmd.velocity = nan * zeros(1,n);
@@ -46,22 +46,22 @@ function holdFodbotPosition(fodbot, duration, varargin)
         startInd = 1:n-c;
         endInd = n-c+1:n;
         
-        fodbot.update();
+%         fodbot.update();
         % lastKin.setBaseFrame(firstKin.getFK('EndEffector', ...
         %                                     fbk.position(1:n-c)));
         
         % cmd.position(startInd) = startAngles(startInd) + ...
         %     (angles(startInd) - startAngles(startInd)) * .9;
 
-        cmd.position = angles;
-        cmd.position(endInd) = ...
-            lastKin.getIK('xyz', goal(1:3,4), 'axis', goal(1:3,1:3)*[0;0;1], ...
-                                 'InitialPositions', ...
-                                 angles(endInd));
+%         cmd.position = angles;
+%         cmd.position(endInd) = ...
+%             lastKin.getIK('xyz', goal(1:3,4), 'axis', goal(1:3,1:3)*[0;0;1], ...
+%                                  'InitialPositions', ...
+%                                  angles(endInd));
 
-        % cmd.position = kin.getIK('xyz', goal(1:3,4), 'axis', goal(1:3,1:3)*[0;0;1], ...
-        %                                 'InitialPositions', ...
-        %                                 fbk.position);
+        cmd.position = kin.getIK('xyz', goal(1:3,4), 'axis', goal(1:3,1:3)*[0;0;1], ...
+                                        'InitialPositions', ...
+                                        fbk.position);
         
         % cmd.position = cmd.position + (startAngles - cmd.position)*.9;
         
@@ -73,16 +73,17 @@ function holdFodbotPosition(fodbot, duration, varargin)
         
         magError = norm(error);
         disp(error)
-        magError
+%         magError
         magCorrection = min(magError*.1, .1);
         
         cmd.position = cmd.position + restoring * magCorrection;
         
-        cmd.torque = kin.getGravCompTorques(fbk.position, [0 0 1]);
+        cmd.effort = kin.getGravCompEfforts(fbk.position, [0 0 1]);
         
         
         if(strcmpi(re.display, 'on'))
-            fk = lastKin.getFK('EndEffector',fbk.position(endInd));
+%             fk = lastKin.getFK('EndEffector',fbk.position(endInd));
+            fk =kin.getFK('EndEffector',fbk.position);
             positionErr = fk(1:3,4) - goal(1:3,4)
         end
 

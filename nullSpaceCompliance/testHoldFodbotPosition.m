@@ -1,3 +1,8 @@
-% f = Fodbot();
-pause(10)
+
+startup;
+
+f = Fodbot();
+pause(1)
+
+
 holdFodbotPosition(f, inf);
