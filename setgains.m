@@ -1,13 +1,13 @@
 % SET GAINS
-gains = GainStruct()
+gains = GainStruct();
 
 % Initialize X Module Gains
 ones_n                          = ones(1,2);
 XcontrolStrategy           = ones_n*4;
 
-XpositionKp                           = [4 4];
+XpositionKp                           = [7 4];
 XpositionKi                            = ones_n*0.01;
-XpositionKd                           = ones_n*1;
+XpositionKd                           = [6 1];
 XpositionFF                           = ones_n*0;
 XpositionDeadZone                = ones_n*0;
 XpositionIClamp                     = ones_n*1;

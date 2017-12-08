@@ -1,6 +1,7 @@
 close all;
 clear all
 addpath('HebiCam');
+javaaddpath('hebicam-1.1-all-x86.jar');
 
 % snake head group
 g = HebiLookup.newGroupFromNames('*', 'S_CAM_1');
@@ -15,7 +16,7 @@ cam = HebiCam(url);
 camfig = figure();
 img = getsnapshot(cam);
 % low pass filter on rot angle
-alphaFilter0 = .1;
+alphaFilter0 = .4;
 alphaFilter = alphaFilter0;
 
 %% feedback
@@ -54,16 +55,19 @@ while true
     %  v = gravity - dot(gravity, [0;0;1]);
     rotImageAngleNow = atan2(gravity(1), -gravity(2));
     
-   %% PROBLEM: When the image angle goes from around the boundary pi to -pi or back, 
-   % then the filter fails. It should be a filter on a S1 element, not a R1
-   % element!
+    %% PROBLEM: When the image angle goes from around the boundary pi to -pi or back,
+    % then the filter fails. It should be a filter on a S1 element, not a R1
+    % element!
     
     %% scale filter by how big close we are to straight up
-    alphaFilter  = alphaFilter0 *(10 - abs(gravity(3)))/10;
-    if abs(gravity(3))<8 % HACK: don't bother updating rot angle when camera is up or down pointing.
-    rotImageAngle = alphaFilter*rotImageAngleNow +(1-alphaFilter)*rotImageAngle; % filter with some delay
-    end   
-
+    alphaFilter  = alphaFilter0 * (9.81 - abs(gravity(3)))/9.81;
+%     if abs(gravity(3))<8 % HACK: don't bother updating rot angle when camera is up or down pointing.
+        %     rotImageAngle = alphaFilter*rotImageAngleNow +(1-alphaFilter)*rotImageAngle; % filter with some delay
+        th = [rotImageAngle,  rotImageAngleNow];
+        w = [1-alphaFilter; alphaFilter];
+        rotImageAngle = atan2(sin(th)*w, cos(th)*w); % filter on a circle
+%     end
+    
     %% camera
     try
         img = getsnapshot(cam);
