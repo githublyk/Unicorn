@@ -32,13 +32,13 @@ classdef FodbotOffline < handle
     methods(Access = private, Hidden = true)
         function kin = createXKinematics(this)
             kin = HebiKinematics();
-            kin.addBody('X5-4'); % kin.addBody('X5Joint');
+            kin.addBody('X5-4','PosLim',[-pi/2 pi/2]); % kin.addBody('X5Joint');
             kin.addBody('X5Bracket');
             kin.addBody('X5Link','Extension',0,'Twist',pi);
 %             kin.addBody('GenericLink', 'CoM', ones(3,1),...%eye(4), ...
 %                               'Output', rotz(pi), ... 
 %                               'mass', 0); 
-            kin.addBody('X5-9'); %kin.addBody('X5Joint');
+            kin.addBody('X5-9','PosLim',[-inf inf]); %kin.addBody('X5Joint');
         end
         
         function kin = addSKinematics(this, kin, numModules, camera)

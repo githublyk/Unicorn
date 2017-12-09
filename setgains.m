@@ -5,7 +5,7 @@ gains = GainStruct();
 ones_n                          = ones(1,2);
 XcontrolStrategy           = ones_n*4;
 
-XpositionKp                           = [7 4];
+XpositionKp                           = [10 4];
 XpositionKi                            = ones_n*0.01;
 XpositionKd                           = [6 1];
 XpositionFF                           = ones_n*0;
