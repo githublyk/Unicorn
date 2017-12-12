@@ -1,6 +1,8 @@
 function [] = startup()
 % startup adds paths required to run demos
 
+format compact;
+
 localDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(localDir));
 addpath(fullfile(localDir, 'camera'));

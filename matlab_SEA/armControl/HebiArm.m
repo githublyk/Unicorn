@@ -393,7 +393,7 @@ classdef HebiArm < handle
 
                 % Send the Commands
                 cmd.position = cmdAngles;
-                cmd.velocity = cmdVelocities;
+                %cmd.velocity = cmdVelocities;
                 cmd.effort = cmdTorques;
                 this.group.set(cmd);
 

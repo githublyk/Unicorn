@@ -10,7 +10,7 @@ fbk = f.fullGroup.getNextFeedback();
 errorBaseline = fbk.torque - fbk.torqueCmd;
 
 cmd.position = [-.25, -.15, -.09, -.8, .4,...
-                -.8, -.07, -.06, -.17, -.8];
+                          -.8, -.07, -.06, -.17, -.8];
 cmd.torque = f.fullKin.getGravCompTorques(cmd.position, ...
                                           [0 0 1]);
 % cmd.position = zeros(1,10);

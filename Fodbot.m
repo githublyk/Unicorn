@@ -3,14 +3,8 @@ classdef Fodbot < FodbotOffline
     
     methods(Access = public)
         function this = Fodbot()
-%             sGroup = HebiLookup.newGroupFromNames('*', ...
+
             sGroup = HebiLookup.newConnectedGroupFromName('*','SA065');
-%           {'SA065', 'SA068', 'SA069', ...
-%            'SA067', 'SA064'
-           % 'SA067', ...
-            % 'SA068', 'SA069',...
-            % 'SA065', 'SA076'...
-%                    });
 
             this@FodbotOffline(2 + sGroup.getNumModules);
             
@@ -22,7 +16,7 @@ classdef Fodbot < FodbotOffline
             this.fullGroup = HebiLookup.newGroupFromNames('*',...
                 [this.xGroup.getInfo.name;
                  this.sGroup.getInfo.name]);
-            setgains;
+            setgains2; %%
             
             this.arm = HebiArm(this.fullGroup, this.fullKin);
 %             this.arm = ContactArm(this.fullGroup, this.fullKin);
@@ -42,10 +36,11 @@ classdef Fodbot < FodbotOffline
             z = zeros(1,10);
             
             wp.Forward = [.5 0 1.1 .7 0 .5 -.5 -.2 z];
-            wp.Right = [-.5 0 .5 .5 0 .5 .5 0 z];
+            wp.Right = [zeros(1,10) z];%[-.5 0 .5 .5 0 .5 .5 0 z];
             wp.Left = [.5 0 -.5 .5 0 .5 -.5 0 z];
-            wp.stowed = [0 0 -1.54 1.4 1.5 -1.73 -0.21 1.53 z];
-            wp.stowedMid = [0 0 -0.95 0.98 1.28 -0.80 -0.70 0.13 z];
+            wp.stowed = 1.57*[0 -1 -1 1 -1 -1 1 0  -1 -1 z];
+            wp.stowedMid = wp.stowed - 0.4*sign(wp.stowed);%[0 0 -0.95 0.98 1.28 -0.80 -0.70 0.13 z];
+            wp.extend = [zeros(1,10) z];
             
             wp = structfun(@(field) field(this.allModules), wp,...
                            'UniformOutput', false);
