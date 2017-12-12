@@ -37,6 +37,7 @@ classdef Fodbot < FodbotOffline
             
             wp.Forward = [.5 0 1.1 .7 0 .5 -.5 -.2 z];
             wp.Right = [zeros(1,10) z];%[-.5 0 .5 .5 0 .5 .5 0 z];
+            wp.Right(2) = pi/2;
             wp.Left = [.5 0 -.5 .5 0 .5 -.5 0 z];
             wp.stowed = 1.57*[0 -1 -1 1 -1 -1 1 0  -1 -1 z];
             wp.stowedMid = wp.stowed - 0.4*sign(wp.stowed);%[0 0 -0.95 0.98 1.28 -0.80 -0.70 0.13 z];

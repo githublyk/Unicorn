@@ -9,11 +9,15 @@ classdef FodbotOffline < handle
                 numModules = 8;
             end
                
-            
             this.xKin = this.createXKinematics();
             this.fullKin = this.addSKinematics(this.createXKinematics(), ...
                                                numModules - 2, ...
                                                camera);
+            R = [0 -1 0;
+                   1 0 0;
+                   0 0 1];
+            BaseFrame = [R [0;0;0]; [0 0 0 1]];
+            this.fullKin.setBaseFrame(BaseFrame);
             this.sPlotter = HebiPlotter();
 
         end
