@@ -12,11 +12,16 @@ classdef FodbotOffline < handle
             this.xKin = this.createXKinematics();
             this.fullKin = this.addSKinematics(this.createXKinematics(), ...
                                                numModules - 2, ...
-                                               camera);
-            R = [0 -1 0;
-                   1 0 0;
-                   0 0 1];
-            BaseFrame = [R [0;0;0]; [0 0 0 1]];
+                                               camera);                           
+            th1 = pi/2; %base frame rotated pi/2 about X
+            R1 = [cos(th1) -sin(th1) 0; 
+                     sin(th1) cos(th1) 0;
+                     0 0 1];
+            th2 = -pi/2; %base frame rotated -pi/2 about Y
+            R2 = [cos(th2) 0 sin(th2);
+                     0 1 0;
+                     -sin(th2) 0 cos(th2)];
+            BaseFrame = [R2 [0;0;0]; [0 0 0 1]];
             this.fullKin.setBaseFrame(BaseFrame);
             this.sPlotter = HebiPlotter();
 
