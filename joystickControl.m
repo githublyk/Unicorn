@@ -25,7 +25,8 @@ startup;
         
         runSpecialCommands(fodbot, buttons, joy);
         
-        if(any(buttons(9:12)))
+%        if(any(buttons(10)))
+        if buttons(10)
             disp('ending')
             running = false;
         end
@@ -62,7 +63,6 @@ function cartMotion = calculateMotion(joyCmd, cartMotion, dt)
     cartMotion = [xyz, roll, pitch, yaw];
 end
 
-
 function updateFodbot(fodbot, dP)
     dP(5) = .5*dP(5);
     dP(6) = -.5*dP(6);
@@ -80,7 +80,6 @@ function updateFodbot(fodbot, dP)
     fbk = fodbot.fullGroup.getNextFeedback();
     fk = fodbot.arm.getNominalFK();
     newFK = dT *fk;
-    
     
     % angles = kin.getIK(...
     %     'xyz', newFK(1:3,4), ...
@@ -105,19 +104,47 @@ function runSpecialCommands(fodbot, buttons, joy)
         runScriptedRoutines(fodbot, buttons(1:4))
         return
     end
+    
+    if(buttons(7))
+        switch(find(buttons, 1))
+          case 1
+            fodbot.lookLeftLeft;
+          case 2
+            fodbot.lookBackLeft;
+          case 3
+            fodbot.lookRightLeft;
+          case 4
+            fodbot.lookForwardLeft;
+        end
 
-    switch(find(buttons, 1))
-      case 1
-        fodbot.lookLeft;
-      case 2
-        fodbot.stow;
-        waitForUnstow(joy);
-        fodbot.unstow;
-      case 3
-        fodbot.lookRight;
-      case 4
-        fodbot.lookForward;
+    elseif(buttons(8))
+        switch(find(buttons, 1))
+          case 1
+            fodbot.lookLeftRight;
+          case 2
+            fodbot.lookBackRight;
+          case 3
+            fodbot.lookRightRight;
+          case 4
+            fodbot.lookForwardRight;
+        end
+    else
+        switch(find(buttons, 1))
+          case 1
+            fodbot.lookLeft;
+          case 2
+            fodbot.lookBack;
+          case 3
+            fodbot.lookRight;
+          case 4
+            fodbot.lookForward;
+          case 12 
+            fodbot.stow;
+            waitForUnstow(joy);
+            fodbot.unstow;
+        end
     end
+    
 end
 
 function runScriptedRoutines(fodbot, buttons)
@@ -133,7 +160,7 @@ end
 
 function waitForUnstow(joy)
     [~, buttons] = read(joy);
-    while(isempty(find(buttons(1:4))))
+    while(isempty([find(buttons(1:4)),find(buttons(12))]))
         [~, buttons] = read(joy);
     end
 end
