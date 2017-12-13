@@ -13,15 +13,11 @@ classdef FodbotOffline < handle
             this.fullKin = this.addSKinematics(this.createXKinematics(), ...
                                                numModules - 2, ...
                                                camera);                           
-            th1 = pi/2; %base frame rotated pi/2 about X
-            R1 = [cos(th1) -sin(th1) 0; 
-                     sin(th1) cos(th1) 0;
-                     0 0 1];
-            th2 = -pi/2; %base frame rotated -pi/2 about Y
-            R2 = [cos(th2) 0 sin(th2);
-                     0 1 0;
-                     -sin(th2) 0 cos(th2)];
-            BaseFrame = [R2 [0;0;0]; [0 0 0 1]];
+            th3 = -pi/2; %base frame rotated -pi/2 about Z to allign gravity
+            R3 = [1 0 0;
+                     0 cos(th3) -sin(th3); 
+                     0 sin(th3) cos(th3)];
+            BaseFrame = [R3 [0;0;0]; [0 0 0 1]];
             this.fullKin.setBaseFrame(BaseFrame);
             this.sPlotter = HebiPlotter();
 

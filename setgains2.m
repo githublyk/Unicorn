@@ -45,8 +45,8 @@ XeffortPunch                      = ones_n*0;
 XeffortMinTarget                = -[10 20];
 XeffortMaxTarget               = [10 20];
 XeffortTargetLowpassGain  = ones_n*1;
-XeffortMinOutput               = ones_n*-1;
-XeffortMaxOutput              = ones_n*1;
+XeffortMinOutput               = -[4 9]; %ones_n*-1;
+XeffortMaxOutput              = [4 9]; %ones_n*1;
 XeffortOutputLowpassGain  = ones_n*0.9;
 XeffortDOnError                  = ones_n*0;
 
@@ -54,9 +54,9 @@ XeffortDOnError                  = ones_n*0;
 ones_n                        = ones(1,sGroup.getNumModules);
 ScontrolStrategy           = ones_n*4;
 
-SpositionKp                           = ones_n*10;
+SpositionKp                           = ones_n*12;
 SpositionKi                            = ones_n*.01;%*1000;
-SpositionKd                           = ones_n*1;%*.001;
+SpositionKd                           = (ones_n(1:end))*4;%*.001;
 SpositionFF                           = ones_n*0;
 SpositionDeadZone                = ones_n*0;
 SpositionIClamp                     = ones_n*1;
@@ -94,8 +94,8 @@ SeffortPunch                      = ones_n*0;
 SeffortMinTarget                = ones_n*-12;
 SeffortMaxTarget               = ones_n*12;
 SeffortTargetLowpassGain  = ones_n*1;
-SeffortMinOutput               = ones_n*-1;
-SeffortMaxOutput              = ones_n*1;
+SeffortMinOutput               = ones_n*-5;
+SeffortMaxOutput              = ones_n*5;
 SeffortOutputLowpassGain  = ones_n*.15;
 SeffortDOnError                  = ones_n*0;
 
