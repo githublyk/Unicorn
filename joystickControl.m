@@ -23,7 +23,6 @@ startup;
         
         runSpecialCommands(fodbot, buttons, joy);
         
-%        if(any(buttons(10)))
         if buttons(10)
             disp('ending')
             running = false;
@@ -39,7 +38,7 @@ function joyCmd = mapJoystick(axes, buttons)
     axes = axes .* (abs(axes)>.2);
     joyCmd.x = -axes(1);
     joyCmd.y = axes(2);
-    joyCmd.z = buttons(6) - buttons(5);
+    joyCmd.z = buttons(7)*axes(2);
     joyCmd.roll = buttons(8) - buttons(7);
     joyCmd.pitch = -axes(4);
     joyCmd.yaw = axes(3);
@@ -148,7 +147,7 @@ function runSpecialCommands(fodbot, buttons, joy)
           case 4
             fodbot.lookForwardLeft;
         end
-
+        
     elseif(buttons(8))
         switch(find(buttons, 1))
           case 1
@@ -160,6 +159,31 @@ function runSpecialCommands(fodbot, buttons, joy)
           case 4
             fodbot.lookForwardRight;
         end
+        
+    elseif(buttons(5))
+        switch(find(buttons, 1))
+          case 1
+            fodbot.lookInspect51;
+          case 2
+            fodbot.lookInspect52;
+          case 3
+            fodbot.lookInspect53;
+          case 4
+            fodbot.lookInspect54;
+        end
+        
+    elseif(buttons(6))
+        switch(find(buttons, 1))
+          case 1
+            fodbot.lookInspect61;
+          case 2
+            fodbot.lookInspect62;
+          case 3
+            fodbot.lookInspect63;
+          case 4
+            fodbot.lookInspect64;
+        end
+        
     else
         switch(find(buttons, 1))
           case 1
@@ -175,6 +199,7 @@ function runSpecialCommands(fodbot, buttons, joy)
             waitForUnstow(joy);
             fodbot.unstow;
         end
+        
     end
     
 end

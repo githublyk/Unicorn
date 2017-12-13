@@ -37,20 +37,30 @@ classdef Fodbot < FodbotOffline
             
 %            wp.Forward = [zeros(1,10) z]; %[.5 0 1.1 .7 0 .5 -.5 -.2 z];
             wp.RightLeft = [0 0.6 0.3837    1.1710    1.0434   -0.2602   -1.1788    0.8500    0.1684    0.7568 z];
-            wp.ForwardLeft = [wp.RightLeft(1) wp.RightLeft(2)+pi/2 wp.RightLeft(3:end)];
-            wp.LeftLeft = [wp.RightLeft(1) wp.RightLeft(2)+pi wp.RightLeft(3:end)];
-            wp.BackLeft = [wp.RightLeft(1) wp.RightLeft(2)+3*pi/2 wp.RightLeft(3:end)];
+            wp.ForwardLeft = wp.RightLeft  + [0 pi/2 0 0 0 0 0 0 0 0 z];
+            wp.LeftLeft = wp.RightLeft  + [0 +pi 0 0 0 0 0 0 0 0 z];
+            wp.BackLeft = wp.RightLeft  + [0 -pi/2 0 0 0 0 0 0 0 0 z];
             
-            wp.Forward = [0 0 -0.0011    0.9212    0.0211   -0.1799   -0.0403    0.4679   -0.0635    0.1457];
-            wp.Left = [wp.Forward(1) wp.Forward(2)+pi/2 wp.Forward(3:end)];
-            wp.Back = [wp.Forward(1) wp.Forward(2)+pi wp.Forward(3:end)];
-            wp.Right = [wp.Forward(1) wp.Forward(2)-pi/2 wp.Forward(3:end)];
+            wp.Forward = [0 0 -0.0011    0.3212    0.0211   -0.6799   -0.0403    0.7679   -0.0635    0.4457 z];
+            wp.Left = wp.Forward + [0 pi/2 0 0 0 -0.3 0 0 0 0 z];
+            wp.Back = wp.Forward + [0 -pi 0 0 0 0 0 0 0 0 z];
+            wp.Right = wp.Forward + [0 -pi/2 0 0 0 -0.3 0 0 0 0 z];
             
             wp.ForwardRight = [0 0.9 0.2165   -1.1749    1.1806    1.1149   -0.1271    0.9039    0.8553   -0.2136 z];
-            wp.LeftRight = [wp.ForwardRight(1) wp.ForwardRight(2)+pi/2 wp.ForwardRight(3:end)];
-            wp.BackRight = [wp.ForwardRight(1) wp.ForwardRight(2)+pi wp.ForwardRight(3:end)];
-            wp.RightRight = [wp.ForwardRight(1) wp.ForwardRight(2)-pi/2 wp.ForwardRight(3:end)];
+            wp.LeftRight = wp.ForwardRight + [0 pi/2 0 0 0 0 0 0 0 0 z];
+            wp.BackRight = wp.ForwardRight + [0 -pi 0 0 0 0 0 0 0 0 z];
+            wp.RightRight = wp.ForwardRight + [0 -pi/2 0 0 0 0 0 0 0 0 z];
             
+            wp.Inspect51 = [-0.15 -1.8 -0.6241    1.0304    0.0323   -1.1165   -0.5344   -0.7792   -1.0377   0.97];
+            wp.Inspect52 = [0.32 -1.65 -0.9447    0.7239   -0.1706   -0.9530    1.0305   -0.8029   -0.5901    0.0132];
+            wp.Inspect53 = [0.7 -1.93 -0.9578    0.5536   -0.9503    0.3142    0.2471   -0.3178    0.2734   -1.1246];
+            wp.Inspect54 = [0.8 -1.58 -0.6333    0.1132   -0.5328    0.4594    0.0009    0.3459   -0.0193   -0.8411];
+            
+            wp.Inspect61 = [0 0  0 0 0 0 0 0 0 0];
+            wp.Inspect62 = [0 0  0 0 0 0 0 0 0 0];
+            wp.Inspect63 = [0 0  0 0 0 0 0 0 0 0];
+            wp.Inspect64 = [0 0  0 0 0 0 0 0 0 0];
+
             wp.stowed = 1.57*[0 -1 -1 1 -1 -1 1 0  -1 -1 z];
             wp.stowedMid = wp.stowed - 0.4*sign(wp.stowed);%[0 0 -0.95 0.98 1.28 -0.80 -0.70 0.13 z];
             wp.extend = [zeros(1,10) z];
@@ -133,6 +143,40 @@ classdef Fodbot < FodbotOffline
         
         function lookExtend(this)
             this.arm.moveJoint(this.waypoints.extend);
+        end
+
+        %% Inspection Sequence 1
+        function lookInspect51(this)
+            this.arm.moveJoint(this.waypoints.Inspect51);
+        end
+        
+        function lookInspect52(this)
+            this.arm.moveJoint(this.waypoints.Inspect52);
+        end
+        
+        function lookInspect53(this)
+            this.arm.moveJoint(this.waypoints.Inspect53);
+        end
+
+        function lookInspect54(this)
+            this.arm.moveJoint(this.waypoints.Inspect54);
+        end
+
+        %% Inspection Sequence 2
+        function lookInspect61(this)
+            this.arm.moveJoint(this.waypoints.Inspect61);
+        end
+        
+        function lookInspect62(this)
+            this.arm.moveJoint(this.waypoints.Inspect62);
+        end
+        
+        function lookInspect63(this)
+            this.arm.moveJoint(this.waypoints.Inspect63);
+        end
+
+        function lookInspect64(this)
+            this.arm.moveJoint(this.waypoints.Inspect64);
         end
 
     end
