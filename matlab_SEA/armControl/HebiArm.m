@@ -499,7 +499,7 @@ classdef HebiArm < handle
         % Click Left Joystick to end
             if ~isempty(this.joystick)
                 [axes, buttons, povs] = read( this.joystick );
-                abort = buttons(11);
+                abort = buttons(10);
             else
                 abort = 0;
             end
