@@ -12,6 +12,7 @@ startup;
     t = tic;
     while(running)
         [axes, buttons, povs] = read(joy);
+        axes % buttons
         dt = toc(t);
         
         joyCommands = mapJoystick(axes, buttons);
@@ -22,7 +23,6 @@ startup;
         
         runSpecialCommands(fodbot, buttons, joy);
         
-%        if(any(buttons(10)))
         if buttons(10)
             disp('ending')
             running = false;
@@ -37,8 +37,8 @@ end
 function joyCmd = mapJoystick(axes, buttons)
     axes = axes .* (abs(axes)>.2);
     joyCmd.x = -axes(1);
-    joyCmd.y = -axes(2);
-    joyCmd.z = buttons(6) - buttons(5);
+    joyCmd.y = axes(2);
+    joyCmd.z = buttons(7)*axes(2);
     joyCmd.roll = buttons(8) - buttons(7);
     joyCmd.pitch = -axes(4);
     joyCmd.yaw = axes(3);
@@ -65,15 +65,9 @@ end
 function updateFodbot(fodbot, dP)
     dP(5) = .5*dP(5);
     dP(6) = -.5*dP(6);
-
-    kin=  fodbot.fullKin;
-    fbk = fodbot.fullGroup.getNextFeedback();
-    fk = fodbot.arm.getNominalFK();
-    frames = kin.getForwardKinematics('output', fbk.position);
-    f = frames(1:3,1:3,end);
-    transl = f(1:3,1:3)*[dP(1) 0 dP(2)]';
-    thetay = -dP(6)*(1-dP(7));
-    thetap = dP(5)*(1-dP(7));
+  
+    thetap = dP(6)*(1-dP(7));
+    thetay = dP(5)*(1-dP(7));
     PITCH = [cos(thetap) -sin(thetap) 0;
                  sin(thetap) cos(thetap) 0;
                  0 0 1];
@@ -82,11 +76,13 @@ function updateFodbot(fodbot, dP)
                 -sin(thetay) 0 cos(thetay)];
     ROT = YAW*PITCH*eye(3);
 %    dT = [ROT, [0; 0; 0]; [0,0,0,1]];
-    dT = [ROT, [transl(1); transl(2); transl(3)+dP(3)]; [0,0,0,1]];
+    dT = [ROT, [dP(1); dP(2); dP(3)]; [0,0,0,1]];
 %    dT = [eye(3), [dP(1); dP(2); dP(3)]; [0,0,0,1]];
-
+    
+    kin=  fodbot.fullKin;
+    fbk = fodbot.fullGroup.getNextFeedback();
+    fk = fodbot.arm.getNominalFK();
     newFK = dT *fk;
-    %newFK = dT *frames(:,:,2)';
 
     % angles = kin.getIK(...
     %     'xyz', newFK(1:3,4), ...
@@ -96,7 +92,8 @@ function updateFodbot(fodbot, dP)
             'xyz', newFK(1:3,4), ...
             'InitialPositions', fbk.positionCmd, ...
             'so3', newFK(1:3,1:3));
-
+      frames = kin.getForwardKinematics('output', fbk.position);
+      f = frames(1:3,1:3,end-1);
 %       for i = 1:size(angles)-1
 %           f = frames(1:3,1:3,i)*f;
 %       end
@@ -106,26 +103,23 @@ function updateFodbot(fodbot, dP)
     alpha = atan(f(1,1)/f(2,1))*180/pi;
     beta = atan(sqrt(f(3,2)^2 + f(3,3)^2)/(-f(3,1)))*180/pi;
     gamma = atan(f(3,2)/f(3,3))*180/pi;
-    R =[alpha beta gamma];
+    R =[alpha beta gamma]
     alpha = alpha*pi/180;
     beta = beta*pi/180;
     gamma = gamma*pi/180;
-    %dP(5) - joystick left right
-    %dP(6) - joystick up down
-     if abs(beta)>0 && abs(beta) <=pi/4 % bowing sticker up/down
-         disp("bowing sticker left/right");
-        angles(end-1) = angles(end-1) - dP(7)*dP(5); % Up and down with bowing sticker left
-        angles(end-3) = angles(end-3) + dP(7)*dP(5); % Up and down with bowing sticker left
-        angles(end) = angles(end) - dP(7)*dP(6); % Left and right with bowing sticker left
-        angles(end-2) = angles(end-2) + dP(7)*dP(6); % Left and right with bowing sticker left
+    
+     if abs(beta)>0 && abs(beta) <=pi/4
+        angles(end-1) = angles(end-1) - dP(7)*dP(6);
+        angles(end-3) = angles(end-3) + dP(7)*dP(6);
+        angles(end) = angles(end) + dP(7)*dP(5);
+        angles(end-2) = angles(end-2) - dP(7)*dP(5);
 
       end
-    if abs(beta)>pi/4 && abs(beta) <=pi/2 % bowing sticker left/right
-        disp("bowing sticker down/up");
-        angles(end-1) = angles(end-1) - dP(7)*dP(6); % Left and right with bowing sticker down/up
-        angles(end-3) = angles(end-3) + dP(7)*dP(6); % Left and right with bowing sticker down/up
-        angles(end) = angles(end) + dP(7)*dP(5); % Up and down with bowing sticker down/up
-        angles(end-2) = angles(end-2) - dP(7)*dP(5); % Up and down with bowing sticker down/up
+    if abs(beta)>pi/4 && abs(beta) <=pi/2
+        angles(end-1) = angles(end-1) - dP(7)*dP(5);
+        angles(end-3) = angles(end-3) + dP(7)*dP(5);
+        angles(end) = angles(end) + dP(7)*dP(6);
+        angles(end-2) = angles(end-2) - dP(7)*dP(6);
     end
     
     fodbot.arm.setAngles(angles);
@@ -153,7 +147,7 @@ function runSpecialCommands(fodbot, buttons, joy)
           case 4
             fodbot.lookForwardLeft;
         end
-
+        
     elseif(buttons(8))
         switch(find(buttons, 1))
           case 1
@@ -165,6 +159,31 @@ function runSpecialCommands(fodbot, buttons, joy)
           case 4
             fodbot.lookForwardRight;
         end
+        
+    elseif(buttons(5))
+        switch(find(buttons, 1))
+          case 1
+            fodbot.lookInspect51;
+          case 2
+            fodbot.lookInspect52;
+          case 3
+            fodbot.lookInspect53;
+          case 4
+            fodbot.lookInspect54;
+        end
+        
+    elseif(buttons(6))
+        switch(find(buttons, 1))
+          case 1
+            fodbot.lookInspect61;
+          case 2
+            fodbot.lookInspect62;
+          case 3
+            fodbot.lookInspect63;
+          case 4
+            fodbot.lookInspect64;
+        end
+        
     else
         switch(find(buttons, 1))
           case 1
@@ -180,6 +199,7 @@ function runSpecialCommands(fodbot, buttons, joy)
             waitForUnstow(joy);
             fodbot.unstow;
         end
+        
     end
     
 end
