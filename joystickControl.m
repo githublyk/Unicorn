@@ -37,12 +37,12 @@ end
 function joyCmd = mapJoystick(axes, buttons)
     axes = axes .* (abs(axes)>.2);
     joyCmd.x = -axes(1);
-    joyCmd.y = -axes(2);
-    joyCmd.z = buttons(6) - buttons(5);
+    joyCmd.y = axes(2);
+    joyCmd.z = buttons(7)*axes(2);
     joyCmd.roll = buttons(8) - buttons(7);
     joyCmd.pitch = -axes(4);
     joyCmd.yaw = axes(3);
-    joyCmd.mode = buttons(7);
+    joyCmd.mode = buttons(7)
 end
 
 function cartMotion = calculateMotion(joyCmd, cartMotion, dt)
@@ -71,9 +71,10 @@ function updateFodbot(fodbot, dP)
     fk = fodbot.arm.getNominalFK();
     frames = kin.getForwardKinematics('output', fbk.position);
     f = frames(1:3,1:3,end);
-    transl = f(1:3,1:3)*[dP(1) 0 dP(2)]';
-    thetay = -dP(6)*(1-dP(7));
-    thetap = dP(5)*(1-dP(7));
+    transl = f(1:3,1:3)*[2*dP(1) 0 -2*dP(2)]';
+    %thetay = -dP(6)*(1-dP(7));
+    thetay = 0;
+    thetap = -dP(6)*(1-dP(7));
     PITCH = [cos(thetap) -sin(thetap) 0;
                  sin(thetap) cos(thetap) 0;
                  0 0 1];
@@ -82,7 +83,7 @@ function updateFodbot(fodbot, dP)
                 -sin(thetay) 0 cos(thetay)];
     ROT = YAW*PITCH*eye(3);
 %    dT = [ROT, [0; 0; 0]; [0,0,0,1]];
-    dT = [ROT, [transl(1); transl(2); transl(3)+dP(3)]; [0,0,0,1]];
+    dT = [ROT, [transl(1); transl(2); transl(3)-0.5*(1-dP(7))*dP(5)]; [0,0,0,1]];
 %    dT = [eye(3), [dP(1); dP(2); dP(3)]; [0,0,0,1]];
 
     newFK = dT *fk;
@@ -129,7 +130,6 @@ function updateFodbot(fodbot, dP)
     end
     
     fodbot.arm.setAngles(angles);
-
 end
 
 function runSpecialCommands(fodbot, buttons, joy)
@@ -153,7 +153,7 @@ function runSpecialCommands(fodbot, buttons, joy)
           case 4
             fodbot.lookForwardLeft;
         end
-
+        
     elseif(buttons(8))
         switch(find(buttons, 1))
           case 1
@@ -165,6 +165,31 @@ function runSpecialCommands(fodbot, buttons, joy)
           case 4
             fodbot.lookForwardRight;
         end
+        
+    elseif(buttons(5))
+        switch(find(buttons, 1))
+          case 1
+            fodbot.lookInspect51;
+          case 2
+            fodbot.lookInspect52;
+          case 3
+            fodbot.lookInspect53;
+          case 4
+            fodbot.lookInspect54;
+        end
+        
+    elseif(buttons(6))
+        switch(find(buttons, 1))
+          case 1
+            fodbot.lookInspect61;
+          case 2
+            fodbot.lookInspect62;
+          case 3
+            fodbot.lookInspect63;
+          case 4
+            fodbot.lookInspect64;
+        end
+        
     else
         switch(find(buttons, 1))
           case 1
@@ -180,6 +205,7 @@ function runSpecialCommands(fodbot, buttons, joy)
             waitForUnstow(joy);
             fodbot.unstow;
         end
+        
     end
     
 end
