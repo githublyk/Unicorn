@@ -71,10 +71,9 @@ function updateFodbot(fodbot, dP)
     fk = fodbot.arm.getNominalFK();
     frames = kin.getForwardKinematics('output', fbk.position);
     f = frames(1:3,1:3,end);
-    transl = f(1:3,1:3)*[2*dP(1) 0 2*dP(2)]';
-    %thetay = -dP(6)*(1-dP(7));
-    thetay = 0;
-    thetap = -dP(6)*(1-dP(7));
+    transl = f(1:3,1:3)*[dP(1) 0 dP(2)]';
+    thetay = -dP(6)*(1-dP(7));
+    thetap = dP(5)*(1-dP(7));
     PITCH = [cos(thetap) -sin(thetap) 0;
                  sin(thetap) cos(thetap) 0;
                  0 0 1];
@@ -83,7 +82,7 @@ function updateFodbot(fodbot, dP)
                 -sin(thetay) 0 cos(thetay)];
     ROT = YAW*PITCH*eye(3);
 %    dT = [ROT, [0; 0; 0]; [0,0,0,1]];
-    dT = [ROT, [transl(1); transl(2); transl(3)-0.5*(1-dP(7))*dP(5)]; [0,0,0,1]];
+    dT = [ROT, [transl(1); transl(2); transl(3)+dP(3)]; [0,0,0,1]];
 %    dT = [eye(3), [dP(1); dP(2); dP(3)]; [0,0,0,1]];
 
     newFK = dT *fk;
